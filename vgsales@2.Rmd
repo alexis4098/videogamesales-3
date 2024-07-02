@@ -1,0 +1,150 @@
+---
+title: "Video game sales "
+output: html_notebook
+---
+
+| **\$ variables** | **()categorical** | Col3 |
+|------------------|-------------------|------|
+| Rank             | order factor      |      |
+| Name             | factor            |      |
+| platform         | factor            |      |
+| year             | factor            |      |
+| genre            | factor            |      |
+| publisher        | factor            |      |
+| na_sales         | number            |      |
+| eu_sales         | number            |      |
+| jp_sales         | number            |      |
+| other_sales      | number            |      |
+| global_sales     | number            |      |
+
+In my project, I will analyze the trends in video game sales globally over the past decade to identify the top-selling games and explore the factors contributing to their success. Furthermore, I aim to delve into the preferences of gamers by examining the popularity of different game genres and how they have evolved over time. I am doing the top 50 games 1984-2013
+
+![](dehxjp6-babaedd6-9c54-4c53-ad74-effd79568a04.png)
+
+When analyzing the dataset, I focus on North American sales (NA-sales), Europe sales (EU-sales), and Japan sales (JP-sales) as the y-axis, and genre as the x-axis. When the code is executed, the results should show the best-performing genres for sales in the North American, European, and Japanese regions.![](video-game-genres3-l.jpg)
+
+\
+
+```{r}
+# Subset the dataframe to get the first 50 rows which is the !!!!1!!!! one in the book 
+subset_df <- df[1:50, ]
+
+# Load ggplot2 package
+library(ggplot2)
+
+# Create box plot with subset data, grouped by genre
+ggplot(subset_df, aes(x = genre, y = na_sales, fill = genre)) +
+  geom_boxplot() +
+  labs(title = "Box Plot of NA Sales (First 50 Rows) by Genre", x = "Genre", y = "NA Sales") +
+  theme_minimal()
+
+
+# Subset the dataframe to get the first 50 rows which is the !!!!1!!!! one in the book 
+subset_df <- df[1:50, ]
+
+# Load ggplot2 package
+library(ggplot2)
+
+# Create box plot with subset data, grouped by genre
+ggplot(subset_df, aes(x = genre, y = eu_sales, fill = genre)) +
+  geom_boxplot() +
+  labs(title = "Box Plot of eu Sales (First 50 Rows) by Genre", x = "Genre", y = "eu Sales") +
+  theme_minimal()
+
+
+# Subset the dataframe to get the first 50 rows which is the !!!!1!!!! one in the book 
+subset_df <- df[1:50, ]
+
+# Load ggplot2 package
+library(ggplot2)
+
+# Create box plot with subset data, grouped by genre
+ggplot(subset_df, aes(x = genre, y = jp_sales, fill = genre)) +
+  geom_boxplot() +
+  labs(title = "Box Plot of jp Sales (First 50 Rows) by Genre", x = "Genre", y = "jp Sales") +
+  theme_minimal()
+```
+
+Based on the data, gamers in North America enjoy playing sports games, puzzles, and racing, with the least interest in fighting games. Additionally, they also play simulation games. In the European Union, gamers prefer sports, racing, and simulation games. On the other hand, in Japan, gamers enjoy role-playing games, platform games, and simulation games
+
+and secondly, I wanted to find out what publisher is the most popular and which company people are buying their games from. I am really curious about the trends in the gaming industry and want to understand the preferences of gamers worldwide. It would be interesting to know if certain publishers have a stronger presence in specific regions and how consumer behavior varies based on the gaming platform.
+
+```{r}
+# Subset the dataframe to get the first 50 rows
+subset_df <- df[1:50, ]
+
+# Load ggplot2 package
+library(ggplot2)
+
+# Create box plot with subset data, grouped by publisher
+ggplot(subset_df, aes(x = publisher, y = na_sales, fill = publisher)) +
+  geom_boxplot() +
+  labs(title = "Box Plot of NA Sales (First 50 Rows) by Publisher", x = "Publisher", y = "NA Sales") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for better readability
+
+
+
+
+# Subset the dataframe to get the first 50 rows
+subset_df <- df[1:50, ]
+
+# Load ggplot2 package
+library(ggplot2)
+
+# Create box plot with subset data, grouped by publisher
+ggplot(subset_df, aes(x = publisher, y = eu_sales, fill = publisher)) +
+  geom_boxplot() +
+  labs(title = "Box Plot of Eu Sales (First 50 Rows) by Publisher", x = "Publisher", y = "eu Sales") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for better readability
+
+
+
+
+# Subset the dataframe to get the first 50 rows
+subset_df <- df[1:50, ]
+
+# Load ggplot2 package
+library(ggplot2)
+
+# Create box plot with subset data, grouped by publisher
+ggplot(subset_df, aes(x = publisher, y = jp_sales, fill = publisher)) +
+  geom_boxplot() +
+  labs(title = "Box Plot of Jp Sales (First 50 Rows) by Publisher", x = "Publisher", y = "jp Sales") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for better readability
+```
+
+I wanted to compair the two company’s Microsoft and Nintendo so I did a welch test :note that this does all games of only north America from Nintendo and Microsoft
+
+```{r}
+#loading of data with only Microsoft and Nintendo 
+clean_up <- df %>%
+  filter(publisher %in% c("Nintendo","Microsoft Game Studios"))
+
+t.test(clean_up$na_sales ~ clean_up$publisher)
+```
+
+Test Type: Welch Two Sample t-test compares North American sales (na_sales) of games by Microsoft Game Studios and Nintendo.
+
+Results: t = -2.0281: Indicates a significant difference in sales.
+
+p-value = 0.04306: Shows moderate evidence against no difference.
+
+Confidence Interval: (-0.66938269, -0.01065645) Conclusion: Nintendo games have significantly higher sales on average than those from Microsoft Game Studios.
+
+Lastly, I wanted to identify a trend where the number of years directly correlates with total sales. By analyzing the data, I aimed to uncover whether there exists a consistent pattern suggesting that as the number of years increases, total sales also show a corresponding increase. This insight could provide valuable predictive information for future sales.
+
+Hide
+
+```{r}
+# Scatter plot of year vs. total_sales
+ggplot(total_sales_by_year, aes(x=as.numeric(year) , y =total_sales )) +
+  geom_point(color = "blue") +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  theme_minimal() +
+  labs(title = "year vs. total_sales")
+```
+
+Upon reviewing the data, it’s clear that as the number of years increases, total sales consistently rise. This trend highlights the positive correlation between time and sales growth, emphasizing the importance of long-term business planning and forecasting.
